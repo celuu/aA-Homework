@@ -30,14 +30,26 @@ class Board
   end
 
   def make_move(start_pos, current_player_name)
-    current_pos = @cups[start_pos]
+    current_hand = @cups[start_pos]
     @cups[start_pos] = []
     cup_idx = start_pos
     
-    # until current_pos.empty?
-    # while current_pos > 0
-    #   @cups[start_pos + i]current_pos.pop
-      
+    until current_hand.empty?
+      if cup_idx == other_players_home_idx(current_player_name)
+        cup_idx += 1
+      end
+      @cups[cup_idx % @cups.length] << current_hand.pop
+      cup_idx += 1
+    end
+    
+    if @cups[cup_idx % @cups.length].length > 1
+      make_move(cup_idx % @cups.length, current_player_name)
+    end
+    # probably return :next_turn
+  end
+
+  def other_players_home_idx(current_player_name)
+    return current_player_name == @name1 ? 13 : 6
   end
 
   def next_turn(ending_cup_idx)
